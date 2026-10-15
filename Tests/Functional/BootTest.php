@@ -2,6 +2,8 @@
 
 namespace Lexik\Bundle\DataLayerBundle\Tests\Functional;
 
+use Lexik\Bundle\DataLayerBundle\Manager\DataLayerManager;
+
 /**
  * BootTest
  *
@@ -16,5 +18,9 @@ class BootTest extends TestCase
 
         $this->assertSame('test', $kernel->getEnvironment());
         $this->assertTrue($kernel->isDebug());
+        $this->assertInstanceOf(
+            DataLayerManager::class,
+            $kernel->getContainer()->get('lexik_data_layer.manager.data_layer_manager')
+        );
     }
 }

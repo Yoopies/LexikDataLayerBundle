@@ -30,8 +30,15 @@ class UserIdCollector implements CollectorInterface
     {
         $token = $this->tokenStorage->getToken();
 
-        if ($token && $token->getUser() && $token->getUser() instanceof UserInterface) {
-            $data[] = ['user_id' => md5($token->getUser()->getUsername())];
+        if (!$token || !$token->getUser() instanceof UserInterface) {
+            return;
         }
+
+        $user = $token->getUser();
+
+        // getUserIdentifier() is only declared on UserInterface since Symfony 6.0
+        $identifier = method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : $user->getUsername();
+
+        $data[] = ['user_id' => md5($identifier)];
     }
 }

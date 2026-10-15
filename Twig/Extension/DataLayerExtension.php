@@ -25,7 +25,7 @@ class DataLayerExtension extends AbstractExtension
     }
 
     /**
-     * @return array
+     * @return string JSON encoded data layer
      */
     public function getDataLayer()
     {
@@ -38,18 +38,10 @@ class DataLayerExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('lexik_data_layer', [$this, 'getDataLayer'], ['is_safe' => ['html']]),
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'lexik_data_layer';
     }
 }
