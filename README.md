@@ -2,12 +2,12 @@ LexikDataLayerBundle
 ====================
 
 [![Latest Stable Version](https://poser.pugx.org/lexik/data-layer-bundle/v/stable)](https://packagist.org/packages/lexik/data-layer-bundle)
-[![Build Status](https://travis-ci.org/lexik/LexikDataLayerBundle.svg?branch=master)](https://travis-ci.org/lexik/LexikDataLayerBundle)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/lexik/LexikDataLayerBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/lexik/LexikDataLayerBundle/?branch=master)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/4d91d8a5-3a7f-423b-9c6f-5c161246a891/mini.png)](https://insight.sensiolabs.com/projects/4d91d8a5-3a7f-423b-9c6f-5c161246a891)
 
 Manipulate the Google Tag Manager Data Layer from your Symfony application. 
-This bundle is compatible Symfony 2.7+, 3.0+ and 4.0+ and PHP 5.4+ to 7.0+.
+This bundle is compatible with Symfony 5.4 and 6.x, and PHP 7.2.5+.
+Upgrading from 1.x? See [UPGRADE.md](UPGRADE.md) and the [CHANGELOG](CHANGELOG.md).
 
 Installation
 ------------
@@ -17,16 +17,13 @@ to your `composer.json` file:
 
     composer require "lexik/data-layer-bundle"
 
-Register the bundle in `app/AppKernel.php`:
+If you are not using Symfony Flex, register the bundle in `config/bundles.php`:
 
 ``` php
-public function registerBundles()
-{
-    return array(
-        // ...
-        new Lexik\Bundle\DataLayerBundle\LexikDataLayerBundle(),
-    );
-}
+return [
+    // ...
+    Lexik\Bundle\DataLayerBundle\LexikDataLayerBundle::class => ['all' => true],
+];
 ```
 
 Adding informations to the Data Layer
@@ -135,9 +132,11 @@ class UserIdCollector implements CollectorInterface
     {
         $token = $this->tokenStorage->getToken();
 
-        if ($token->getUser() && $token->getUser() instanceof UserInterface) {
-            $data[] = ['user_id' => md5($token->getUser()->getUsername())];
+        if (!$token || !$token->getUser() instanceof UserInterface) {
+            return;
         }
+
+        $data[] = ['user_id' => md5($token->getUser()->getUserIdentifier())];
     }
 }
 ```
@@ -175,7 +174,7 @@ Setup the test suite using [Composer](http://getcomposer.org/):
 
 Run it using PHPUnit:
 
-    $ vendor/bin/phpunit
+    $ composer test
 
 Contributing
 ------------
