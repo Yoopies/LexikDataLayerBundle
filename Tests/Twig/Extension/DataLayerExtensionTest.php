@@ -4,6 +4,7 @@ namespace Lexik\Bundle\DataLayerBundle\Tests\Twig\Extension;
 
 use Lexik\Bundle\DataLayerBundle\Manager\DataLayerManager;
 use Lexik\Bundle\DataLayerBundle\Twig\Extension\DataLayerExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,19 +22,18 @@ class DataLayerExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DataLayerManager
+     * @return MockObject|DataLayerManager
      */
     private function getManagerMock()
     {
-        $managerMock = $this
-            ->getMockBuilder('Lexik\Bundle\DataLayerBundle\Manager\DataLayerManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $managerMock = $this->createMock(DataLayerManager::class);
         $managerMock
             ->expects($this->once())
             ->method('all')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
+        $managerMock
+            ->expects($this->once())
+            ->method('reset');
 
         return $managerMock;
     }

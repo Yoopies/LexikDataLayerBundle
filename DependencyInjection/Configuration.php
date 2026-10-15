@@ -13,10 +13,9 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
-        $treeBuilder->root('lexik_data_layer');
+        $treeBuilder = new TreeBuilder('lexik_data_layer');
 
         return $treeBuilder;
     }

@@ -3,6 +3,7 @@
 namespace Lexik\Bundle\DataLayerBundle\Manager;
 
 use Lexik\Bundle\DataLayerBundle\Collector\CollectorChain;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
@@ -13,9 +14,9 @@ class DataLayerManager
     const KEY = 'lexik_data_layer';
 
     /**
-     * @var SessionInterface
+     * @var RequestStack
      */
-    protected $session;
+    protected $requestStack;
 
     /**
      * @var CollectorChain
@@ -23,12 +24,12 @@ class DataLayerManager
     protected $collectorChain;
 
     /**
-     * @param SessionInterface $session
-     * @param CollectorChain   $collectorChain
+     * @param RequestStack   $requestStack
+     * @param CollectorChain $collectorChain
      */
-    public function __construct(SessionInterface $session, CollectorChain $collectorChain)
+    public function __construct(RequestStack $requestStack, CollectorChain $collectorChain)
     {
-        $this->session = $session;
+        $this->requestStack = $requestStack;
         $this->collectorChain = $collectorChain;
     }
 
@@ -39,10 +40,11 @@ class DataLayerManager
      */
     public function add(array $data)
     {
-        $current = $this->session->get(self::KEY, []);
+        $session = $this->getSession();
+        $current = $session->get(self::KEY, []);
         $current[] = $data;
 
-        $this->session->set(self::KEY, $current);
+        $session->set(self::KEY, $current);
     }
 
     /**
@@ -52,7 +54,7 @@ class DataLayerManager
      */
     public function all()
     {
-        $data = $this->session->get(self::KEY, []);
+        $data = $this->getSession()->get(self::KEY, []);
 
         foreach ($this->collectorChain->getCollectors() as $collector) {
             $collector->handle($data);
@@ -66,6 +68,14 @@ class DataLayerManager
      */
     public function reset()
     {
-        $this->session->remove(self::KEY);
+        $this->getSession()->remove(self::KEY);
+    }
+
+    /**
+     * @return SessionInterface
+     */
+    protected function getSession(): SessionInterface
+    {
+        return $this->requestStack->getSession();
     }
 }

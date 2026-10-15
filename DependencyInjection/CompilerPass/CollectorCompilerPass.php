@@ -14,7 +14,7 @@ class CollectorCompilerPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->has('lexik_data_layer.collector.collector_chain')) {
             return;
